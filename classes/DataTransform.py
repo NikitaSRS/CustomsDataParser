@@ -46,10 +46,9 @@ def ReadingData():
             datareader = csv.reader(csvfile, delimiter='	')
             count = 0
             for row in datareader:
-                if count != 0:
+                if count > 131780:
                     TransformationData(row)
                 count += 1
-                print(count)
             print("Successfully working with csv file")
 
     except Exception as _ex:
@@ -63,7 +62,6 @@ def TransformationData(stringofData):
             export = True
         else:
             export = False
-
         month_id = int(stringofData[1].split('/')[0])
         year_id = int(stringofData[1].split('/')[1])
         if stringofData[2] == 'NNN':
@@ -84,12 +82,12 @@ def TransformationData(stringofData):
                 )
                 with connection.cursor() as cursor:
                     data = (Units(stringofData[4]).lower())
-                    sql = f"select id from knowledgebase.units where raw = '{data}'"
+                    sql = f"select id from knowledgebase.units where raw ILIKE '{data}'"
+                    print(data)
                     cursor.execute(sql)
                     datareader = cursor.fetchall()
                     for row in datareader:
                         unit_id = row[0]
-                    print("Successfully working with database")
                     connection.close()
             except Exception as _ex:
                 print("Error while working with database: ", _ex)
@@ -112,10 +110,11 @@ def TransformationData(stringofData):
                     if stringofData[8] == '67000 - СЕВАСТОПОЛЬ - ГОРОД ФЕДЕРАЛЬНОГО ЗНАЧЕНИЯ':
                         data = stringofData[8].split(' ')[2]
                     else:
-                        if stringofData[8] == '92000 - РЕСПУБЛИКА ТАТАРСТАН (ТАТАРСТАН)' or stringofData[8] == '79000 - РЕСПУБЛИКА АДЫГЕЯ (АДЫГЕЯ)':
-                            data = stringofData[8].split(' ')[2] + ' ' + stringofData[8].split(' ')[3]
-                        else:
-                            data = stringofData[8].split(' - ')[1]
+                        data = stringofData[8].split(' - ')[1]
+                if data == 'РЕСПУБЛИКА ТАТАРСТАН (ТАТАРСТАН)' or data == 'РЕСПУБЛИКА АДЫГЕЯ (АДЫГЕЯ)' or data == 'ХАНТЫ-МАНСИЙСКИЙ АВТОНОМНЫЙ ОКРУГ (ТЮМЕНСКАЯ ОБЛАСТЬ)' or data == 'ЯМАЛО-НЕНЕЦКИЙ АВТОНОМНЫЙ ОКРУГ (ТЮМЕНСКАЯ ОБЛАСТЬ)' or data == 'НЕНЕЦКИЙ АВТОНОМНЫЙ ОКРУГ (АРХАНГЕЛЬСКАЯ ОБЛАСТЬ)':
+                    data = data.split(' (')[0]
+                if data == 'ХАНТЫ-МАНСИЙСКИЙ АВТОНОМНЫЙ ОКРУГ':
+                    data = data + ' – Югра'
                 if data == 'РЕСПУБЛИКА СЕВЕРНАЯ ОСЕТИЯ-АЛАНИЯ':
                     data = 'Республика Северная Осетия – Алания'
                 if data == 'МОСКВА' or data == 'САНКТ-ПЕТЕРБУРГ' or data == 'СЕВАСТОПОЛЬ':
@@ -125,7 +124,6 @@ def TransformationData(stringofData):
                 datareader = cursor.fetchall()
                 for row in datareader:
                     region_id = row[0]
-                print("Successfully working with database")
                 connection.close()
         except Exception as _ex:
             print("Error while working with database: ", _ex)
@@ -139,7 +137,6 @@ def TransformationData(stringofData):
 
     try:
         classes.DataLoad.insertData(region_id, tnved_id, unit_id, stoim, netto, kol, year_id, list_countries_id,month_id, export)
-        print("Data successfully insert")
     except Exception as _ex:
         print(data)
         print("Error while loading data: ", _ex)
