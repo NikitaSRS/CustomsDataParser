@@ -66,7 +66,10 @@ def TransformationData(stringofData):
 
         month_id = int(stringofData[1].split('/')[0])
         year_id = int(stringofData[1].split('/')[1])
-        list_countries_id = stringofData[2]
+        if stringofData[2] == 'NNN':
+            list_countries_id = 'NN'
+        else:
+            list_countries_id = stringofData[2]
         tnved_id = stringofData[3]
         if stringofData[4] == '':
             unit_id = None
