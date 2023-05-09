@@ -1,23 +1,25 @@
 import psycopg2
-import requests
 
-from bs4 import BeautifulSoup
+from config import host, user, password, db_name, port
 
-import datetime
+def insertData(region_id, tnved_id, unit_id, stoim, netto, kol, year_id, list_countries_id, month_id, export):
+    try:
+        connection = psycopg2.connect(
+            port=port,
+            host=host,
+            user=user,
+            password=password,
+            database=db_name
+        )
 
-host = 'localhost'
-port = '5432'
-database = 'database'
-user = 'postgres'
-password = '8228337lolWAT'
+        with connection.cursor() as cursor:
+            sql = "INSERT INTO database.customs_data (region_id, tnved_id, unit_id, stoim, netto, kol, year_id, list_countries_id, month_id, export) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
 
-conn = psycopg2.connect(host=host, port=port, database=database, user=user, password=password)
+            data = (region_id, tnved_id, unit_id, float(stoim), float(netto), float(kol), int(year_id), list_countries_id, int(month_id), export)
+            cursor.execute(sql, data)
+            connection.commit()
+            connection.close()
 
-cursor = conn.cursor()
-
-
-cursor.execute(sql, data)
-
-conn.commit()
-
-conn.close()
+    except Exception as _ex:
+        print("Error while working with PostgreSQL", _ex)
+        exit()
