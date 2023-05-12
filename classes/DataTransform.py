@@ -24,8 +24,12 @@ tnved_reference = None
 def main():
     Extraction()
     ReadingData()
-    os.remove('DataContainer/DATTSVT.csv.zip')
-    os.remove('DataContainer/DATTSVT.csv')
+    try:
+        os.remove('DataContainer/DATTSVT.csv.zip')
+        os.remove('DataContainer/DATTSVT.csv')
+        print("Successfully delete temp files")
+    except Exception as _ex:
+        print("Error while deleting temp files", _ex)
 def Extraction():
 
     try:
@@ -46,10 +50,10 @@ def ReadingData():
             datareader = csv.reader(csvfile, delimiter='	')
             count = 0
             for row in datareader:
-                if count > 131780:
+                if count > 0:
                     TransformationData(row)
                 count += 1
-            print("Successfully working with csv file")
+            print("Successfully working with csv file. Totally records: ", count)
 
     except Exception as _ex:
         print("Error while working with csv file: ", _ex)
@@ -83,7 +87,6 @@ def TransformationData(stringofData):
                 with connection.cursor() as cursor:
                     data = (Units(stringofData[4]).lower())
                     sql = f"select id from knowledgebase.units where raw ILIKE '{data}'"
-                    print(data)
                     cursor.execute(sql)
                     datareader = cursor.fetchall()
                     for row in datareader:
@@ -129,7 +132,6 @@ def TransformationData(stringofData):
             print("Error while working with database: ", _ex)
             exit()
 
-        print("Successfully transforming data")
 
     except Exception as _ex:
         print("Error while transforming data: ", _ex)
