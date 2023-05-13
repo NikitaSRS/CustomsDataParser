@@ -1,8 +1,12 @@
+import io
+import logging
 import zipfile
+import psycopg2
 import csv
 import os
-import psycopg2
 from config import host, user, password, db_name, port
+from API.UnlockCaptcha import decode_captcha, result_decode
+from API.LoadCustomsStatWithOutCaptcha import view_captcha, check_captcha, unload_file_zip
 
 month_nd_days = {
     '01': "31",
@@ -17,6 +21,8 @@ month_nd_days = {
     '11': "30",
     '12': "31"
 }
+
+file_path = "DataContainer"
 
 def main():
     year = checkYear()
@@ -35,7 +41,38 @@ def main():
     print(start_date, end_date)
     ExtractDataFromCustoms(start_date, end_date)
 def ExtractDataFromCustoms(start_pos, end_pos):
-    return 0
+    period = [
+            {
+                "start": start_pos,
+                "end": end_pos
+            }
+        ]
+    print(period)
+    response = view_captcha()
+    image = response['content']
+    key_captcha = response['keyCaptcha']
+    key_response_captcha = decode_captcha(image)
+    result_decode_captcha = result_decode(key_response_captcha, 0)
+    result_check_captcha = check_captcha(key_captcha, result_decode_captcha)
+    if result_check_captcha != "ok":
+        logging.debug("Wrong Captcha")
+    else:
+        try:
+            file = unload_file_zip(key_captcha, period)
+            zip_file = zipfile.ZipFile(io.BytesIO(file))
+            zip_file.extractall(file_path)
+            with open('DataContainer/DATTSVT.csv', newline='', encoding="utf8") as csvfile:
+                datareader = csv.reader(csvfile, delimiter='	')
+                count = 0
+                for row in datareader:
+                    count += 1
+            if count > 1:
+                print("Successfully file download")
+            else:
+                os.remove('DataContainer/DATTSVT.csv')
+                print("Data not updated")
+        except Exception as _ex:
+            print("Error with data extraction", _ex)
 def leapYear(year):
     if year % 4 == 0:
         return "29"
