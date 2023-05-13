@@ -26,6 +26,7 @@ file_path = "DataContainer"
 
 def main():
     year = checkYear()
+    print(year)
     month = checkMonth()
     if len(str(month)) == 1:
         monthS = "0" + str(month)
@@ -39,7 +40,7 @@ def main():
         monthS = "0" + str(month + 1) if len(str(month)) == 1 else str(month + 1)
     end_date = str(year) + "-" + monthS + "-" + (leapYear(year) if month + 1 == 2 else str(month_nd_days[monthS]))
     print(start_date, end_date)
-    ExtractDataFromCustoms(start_date, end_date)
+    return ExtractDataFromCustoms(start_date, end_date)
 def ExtractDataFromCustoms(start_pos, end_pos):
     period = [
             {
@@ -73,6 +74,7 @@ def ExtractDataFromCustoms(start_pos, end_pos):
                 print("Data not updated")
         except Exception as _ex:
             print("Error with data extraction", _ex)
+    return count
 def leapYear(year):
     if year % 4 == 0:
         return "29"
@@ -91,10 +93,14 @@ def checkYear():
             sql = f"select year_id from database.customs_data order by year_id desc limit 1"
             cursor.execute(sql)
             datareader = cursor.fetchall()
-            for row in datareader:
-                year = row[0]
-            connection.close()
-            return year
+            if datareader == []:
+                connection.close()
+                return 2018
+            else:
+                for row in datareader:
+                    year = row[0]
+                connection.close()
+                return year
     except Exception as _ex:
         print("Error while working with database: ", _ex)
 
@@ -111,9 +117,13 @@ def checkMonth():
             sql = f"select month_id from database.customs_data order by month_id desc limit 1"
             cursor.execute(sql)
             datareader = cursor.fetchall()
-            for row in datareader:
-                year = row[0]
-            connection.close()
-            return year
+            if datareader == []:
+                connection.close()
+                return 12
+            else:
+                for row in datareader:
+                    month = row[0]
+                connection.close()
+                return month
     except Exception as _ex:
         print("Error while working with database: ", _ex)

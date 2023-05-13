@@ -21,32 +21,19 @@ tnved_reference = None
 
 
 def main():
-    #Extraction()
     ReadingData()
     try:
         os.remove('DataContainer/DATTSVT.csv')
         print("Successfully delete temp files")
     except Exception as _ex:
         print("Error while deleting temp files", _ex)
-"""def Extraction():
 
-    try:
-        archive = 'DataContainer/DATTSVT.csv.zip'
-
-        with zipfile.ZipFile(archive, 'r') as zip_file:
-            zip_file.extractall('DataContainer')
-
-        print("Successfully working with zip file")
-
-    except Exception as _ex:
-        print("Error while working with zip file: ", _ex)
-        exit()
-"""
 def ReadingData():
     try:
         with open('DataContainer/DATTSVT.csv', newline='', encoding="utf8") as csvfile:
             datareader = csv.reader(csvfile, delimiter='	')
             count = 0
+            print("Start working with data")
             for row in datareader:
                 if count > 0:
                     TransformationData(row)
