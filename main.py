@@ -1,8 +1,5 @@
-import classes.DataTransform
-import classes.DataExtract
+import CLASSES.DataTransform
+import CLASSES.DataExtract
 
-classes.DataExtract.main()
-#classes.DataTransform.main()
-
-
-
+CLASSES.DataExtract.main()
+CLASSES.DataTransform.main()
