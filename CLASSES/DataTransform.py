@@ -4,7 +4,7 @@ import os
 import psycopg2
 from config import host, user, password, db_name, port
 
-import classes.DataLoad
+import CLASSES.DataLoad
 
 region_id = None
 tnved_id = None
@@ -21,15 +21,14 @@ tnved_reference = None
 
 
 def main():
-    Extraction()
+    #Extraction()
     ReadingData()
     try:
-        os.remove('DataContainer/DATTSVT.csv.zip')
         os.remove('DataContainer/DATTSVT.csv')
         print("Successfully delete temp files")
     except Exception as _ex:
         print("Error while deleting temp files", _ex)
-def Extraction():
+"""def Extraction():
 
     try:
         archive = 'DataContainer/DATTSVT.csv.zip'
@@ -42,7 +41,7 @@ def Extraction():
     except Exception as _ex:
         print("Error while working with zip file: ", _ex)
         exit()
-
+"""
 def ReadingData():
     try:
         with open('DataContainer/DATTSVT.csv', newline='', encoding="utf8") as csvfile:
@@ -137,7 +136,7 @@ def TransformationData(stringofData):
         exit()
 
     try:
-        classes.DataLoad.insertData(region_id, tnved_id, unit_id, stoim, netto, kol, year_id, list_countries_id,month_id, export)
+        CLASSES.DataLoad.insertData(region_id, tnved_id, unit_id, stoim, netto, kol, year_id, list_countries_id, month_id, export)
     except Exception as _ex:
         print(data)
         print("Error while loading data: ", _ex)
