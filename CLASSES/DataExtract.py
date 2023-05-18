@@ -26,7 +26,6 @@ file_path = "DataContainer"
 
 def main():
     year = checkYear()
-    print(year)
     month = checkMonth()
     if len(str(month)) == 1:
         monthS = "0" + str(month)
@@ -39,7 +38,6 @@ def main():
     else:
         monthS = "0" + str(month + 1) if len(str(month)) == 1 else str(month + 1)
     end_date = str(year) + "-" + monthS + "-" + (leapYear(year) if month + 1 == 2 else str(month_nd_days[monthS]))
-    print(start_date, end_date)
     return ExtractDataFromCustoms(start_date, end_date)
 def ExtractDataFromCustoms(start_pos, end_pos):
     period = [
@@ -48,7 +46,6 @@ def ExtractDataFromCustoms(start_pos, end_pos):
                 "end": end_pos
             }
         ]
-    print(period)
     response = view_captcha()
     image = response['content']
     key_captcha = response['keyCaptcha']
@@ -59,6 +56,7 @@ def ExtractDataFromCustoms(start_pos, end_pos):
         logging.debug("Wrong Captcha")
     else:
         try:
+            print("Downloading file...")
             file = unload_file_zip(key_captcha, period)
             zip_file = zipfile.ZipFile(io.BytesIO(file))
             zip_file.extractall(file_path)
@@ -72,9 +70,9 @@ def ExtractDataFromCustoms(start_pos, end_pos):
             else:
                 os.remove('DataContainer/DATTSVT.csv')
                 print("Data not updated")
+            return count
         except Exception as _ex:
             print("Error with data extraction", _ex)
-    return count
 def leapYear(year):
     if year % 4 == 0:
         return "29"

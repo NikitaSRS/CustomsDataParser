@@ -20,7 +20,6 @@ def decode_captcha(image):
 
 def result_decode(key_captcha, second):
     try:
-        print(f"Прошла(о) {second} секунд(а,ы) для ожидания декодирования каптчи с id {key_captcha}")
         time.sleep(1.0)
         url = f"http://rucaptcha.com/res.php?key={key}&id={key_captcha}&action=get"
         response = requests.request("GET", url)
