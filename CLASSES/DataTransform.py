@@ -1,4 +1,3 @@
-import zipfile
 import csv
 import os
 import psycopg2
