@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 default_args = {
 	'owner': 'airflow',
 	'depends_on_past': False,
-	'start_date': datetime(2023, 5, 17),
+	'start_date': datetime(2023, 5, 18),
 	'email_on_failure': False,
 	'email_on_retry': False,
 	'retries': 1,
@@ -13,7 +13,7 @@ default_args = {
 }
 
 dag = DAG(
-	'TSVT_DATA_DAG',
+	'CUSTOMS_DATA_DAG',
 	default_args=default_args,
 	description='DAG to run main.py once a day',
 	schedule_interval=timedelta(days=1)

@@ -78,6 +78,7 @@ def TransformationData(stringofData):
                     connection.close()
             except Exception as _ex:
                 print("Error while working with database: ", _ex)
+                exit()
         stoim = stringofData[5].replace(',', '.')
         netto = stringofData[6].replace(',', '.')
         kol = stringofData[7].replace(',', '.')
@@ -115,8 +116,6 @@ def TransformationData(stringofData):
         except Exception as _ex:
             print("Error while working with database: ", _ex)
             exit()
-
-
     except Exception as _ex:
         print("Error while transforming data: ", _ex)
         exit()
