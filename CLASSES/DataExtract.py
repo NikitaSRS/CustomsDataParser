@@ -1,3 +1,4 @@
+#DataExtract.py
 import io
 import logging
 import zipfile
@@ -24,6 +25,7 @@ month_nd_days = {
 
 file_path = "DataContainer"
 
+#главная функция - инициирует запуск кода данного функционального блока
 def main():
     year = checkYear()
     month = checkMonth()
@@ -39,6 +41,8 @@ def main():
         monthS = "0" + str(month + 1) if len(str(month)) == 1 else str(month + 1)
     end_date = str(year) + "-" + monthS + "-" + (leapYear(year) if month + 1 == 2 else str(month_nd_days[monthS]))
     return ExtractDataFromCustoms(start_date, end_date)
+
+#функция, которая парсит данные
 def ExtractDataFromCustoms(start_pos, end_pos):
     period = [
             {
@@ -73,11 +77,15 @@ def ExtractDataFromCustoms(start_pos, end_pos):
             return count
         except Exception as _ex:
             print("Error with data extraction", _ex)
+
+#функция для определения вискосности года
 def leapYear(year):
     if year % 4 == 0:
         return "29"
     else:
         return "28"
+
+#функция проверки какой год была записан последний
 def checkYear():
     try:
         connection = psycopg2.connect(
@@ -102,6 +110,7 @@ def checkYear():
     except Exception as _ex:
         print("Error while working with database: ", _ex)
 
+#функция проверки какой месяц был записан последним
 def checkMonth():
     try:
         connection = psycopg2.connect(

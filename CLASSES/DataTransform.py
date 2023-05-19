@@ -1,3 +1,4 @@
+#DataTransform.py
 import csv
 import os
 import psycopg2
@@ -18,7 +19,7 @@ export = None
 
 tnved_reference = None
 
-
+#главная функция - инициирует запуск кода данного функционального блока
 def main():
     ReadingData()
     try:
@@ -27,6 +28,7 @@ def main():
     except Exception as _ex:
         print("Error while deleting temp files", _ex)
 
+#считывает данные и csv файла, который был получен в результате парсинга
 def ReadingData():
     try:
         with open('DataContainer/DATTSVT.csv', newline='', encoding="utf8") as csvfile:
@@ -43,7 +45,7 @@ def ReadingData():
         print("Error while working with csv file: ", _ex)
         exit()
 
-
+#функция редактирует входные данные и передает их в функциональный блок, который их загружает в БД
 def TransformationData(stringofData):
     try:
         if stringofData[0] == 'ЭК':
@@ -126,6 +128,8 @@ def TransformationData(stringofData):
         print(data)
         print("Error while loading data: ", _ex)
         exit()
+
+#функция которая редактирует идентификатор единиц измерения
 def Units(edizm):
     try:
         with open('SuppoterFiles/EDIZM.csv', newline='', encoding="utf8") as csvfile:
