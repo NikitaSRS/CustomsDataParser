@@ -2,9 +2,14 @@
 import csv
 import os
 import psycopg2
+import CLASSES
 from config import host, user, password, db_name, port
 
+from CLASSES import funcs, DataLoad
+
 import CLASSES.DataLoad
+
+import CLASSES.funcs.comprasion
 
 region_id = None
 tnved_id = None
@@ -37,7 +42,8 @@ def ReadingData():
             print("Start working with data")
             for row in datareader:
                 if count > 0:
-                    TransformationData(row)
+                    print(count)
+                    TransformationData(row, count)
                 count += 1
             print("Successfully working with csv file. Totally records: ", count)
 
@@ -46,7 +52,7 @@ def ReadingData():
         exit()
 
 #функция редактирует входные данные и передает их в функциональный блок, который их загружает в БД
-def TransformationData(stringofData):
+def TransformationData(stringofData, count):
     try:
         if stringofData[0] == 'ЭК':
             export = True
@@ -81,9 +87,9 @@ def TransformationData(stringofData):
             except Exception as _ex:
                 print("Error while working with database: ", _ex)
                 exit()
-        stoim = stringofData[5].replace(',', '.')
-        netto = stringofData[6].replace(',', '.')
-        kol = stringofData[7].replace(',', '.')
+        stoim = float(stringofData[5].replace(',', '.'))
+        netto = float(stringofData[6].replace(',', '.'))
+        kol = float(stringofData[7].replace(',', '.'))
 
         try:
             connection = psycopg2.connect(
@@ -121,13 +127,25 @@ def TransformationData(stringofData):
     except Exception as _ex:
         print("Error while transforming data: ", _ex)
         exit()
-
-    try:
-        CLASSES.DataLoad.insertData(region_id, tnved_id, unit_id, stoim, netto, kol, year_id, list_countries_id, month_id, export)
-    except Exception as _ex:
-        print(data)
-        print("Error while loading data: ", _ex)
-        exit()
+    newLine = [
+            region_id,
+            tnved_id,
+            unit_id,
+            stoim,
+            netto,
+            kol,
+            year_id,
+            list_countries_id,
+            month_id,
+            export
+        ]
+    if funcs.comprasion.checkUnique(newLine, month_id, year_id):
+        try:
+            DataLoad.insertData(region_id, tnved_id, unit_id, stoim, netto, kol, year_id, list_countries_id, month_id, export)
+        except Exception as _ex:
+            print(data)
+            print("Error while loading data: ", _ex)
+            exit()
 
 #функция которая редактирует идентификатор единиц измерения
 def Units(edizm):

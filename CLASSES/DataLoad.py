@@ -1,6 +1,8 @@
+#DataLoad.py
 import psycopg2
 from config import host, user, password, db_name, port
 
+#функция внесения данных в БД
 def insertData(region_id, tnved_id, unit_id, stoim, netto, kol, year_id, list_countries_id, month_id, export):
     try:
         connection = psycopg2.connect(

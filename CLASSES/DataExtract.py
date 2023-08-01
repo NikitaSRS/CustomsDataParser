@@ -40,7 +40,7 @@ def main():
     else:
         monthS = "0" + str(month + 1) if len(str(month)) == 1 else str(month + 1)
     end_date = str(year) + "-" + monthS + "-" + (leapYear(year) if month + 1 == 2 else str(month_nd_days[monthS]))
-    return ExtractDataFromCustoms(start_date, end_date)
+    return ExtractDataFromCustoms(start_date, end_date) if len(os.listdir('DataContainer')) == 0 else 2
 
 #функция, которая парсит данные
 def ExtractDataFromCustoms(start_pos, end_pos):
